@@ -108,6 +108,38 @@ function pickCategoryWinner(
   }
 }
 
+export async function getPlansBySpeedTier(speedTier: number): Promise<{
+  speedTier: number;
+  matches: ScoredPlan[];
+  availableTiers: number[];
+}> {
+  const allPlans = await getAllPlans();
+
+  const matchingPlans = allPlans.filter((p) => p.downloadSpeed === speedTier);
+
+  // Neutral, generic requirements used purely so the shared scoring
+  // engine can rank same-speed plans on price, flexibility and
+  // features — there's no household/usage context in a speed-only
+  // search, so suitability scoring is intentionally kept baseline.
+  const genericRequirements: CustomerRequirements = {
+    householdSize: "3-4",
+    usageTypes: ["browsing"],
+    deviceCount: "6-10",
+    budget: "no_preference",
+    priority: "best_value",
+  };
+
+  const matches = matchingPlans
+    .map((plan) => scorePlan(plan, matchingPlans, genericRequirements))
+    .sort((a, b) => b.score - a.score);
+
+  const availableTiers = Array.from(
+    new Set(allPlans.map((p) => p.downloadSpeed))
+  ).sort((a, b) => a - b);
+
+  return { speedTier, matches, availableTiers };
+}
+
 export async function getRecommendations(
   requirements: CustomerRequirements
 ): Promise<RecommendationResult> {

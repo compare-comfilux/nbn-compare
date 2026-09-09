@@ -6,6 +6,7 @@ import { SITE_URL } from "@/lib/seo/metadata";
 const STATIC_ROUTES = [
   "",
   "/compare",
+  "/compare/by-speed",
   "/guides",
   "/how-it-works",
   "/methodology",

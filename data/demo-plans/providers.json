@@ -1,0 +1,42 @@
+[
+  {
+    "id": "prov-1",
+    "name": "Demo Provider Alpha",
+    "slug": "demo-provider-alpha",
+    "website": "https://example.com/alpha",
+    "description": "Demo Provider Alpha is placeholder data used to develop and test the comparison engine. It is not a real telecommunications provider.",
+    "active": true
+  },
+  {
+    "id": "prov-2",
+    "name": "Demo Provider Beta",
+    "slug": "demo-provider-beta",
+    "website": "https://example.com/beta",
+    "description": "Demo Provider Beta is placeholder data used to develop and test the comparison engine. It is not a real telecommunications provider.",
+    "active": true
+  },
+  {
+    "id": "prov-3",
+    "name": "Demo Provider Gamma",
+    "slug": "demo-provider-gamma",
+    "website": "https://example.com/gamma",
+    "description": "Demo Provider Gamma is placeholder data used to develop and test the comparison engine. It is not a real telecommunications provider.",
+    "active": true
+  },
+  {
+    "id": "prov-4",
+    "name": "Demo Provider Delta",
+    "slug": "demo-provider-delta",
+    "website": "https://example.com/delta",
+    "description": "Demo Provider Delta is placeholder data used to develop and test the comparison engine. It is not a real telecommunications provider.",
+    "active": true
+  },
+  {
+    "id": "prov-5",
+    "name": "Demo Provider Epsilon",
+    "slug": "demo-provider-epsilon",
+    "website": "https://example.com/epsilon",
+    "description": "Demo Provider Epsilon is placeholder data used to develop and test the comparison engine. It is not a real telecommunications provider.",
+    "active": true
+  }
+]

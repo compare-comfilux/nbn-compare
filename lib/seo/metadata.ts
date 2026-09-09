@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 
 const SITE_NAME = "Compare NBN";
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://compare.comfilux.com.au";
+  process.env.NEXT_PUBLIC_SITE_URL && process.env.NEXT_PUBLIC_SITE_URL.trim() !== ""
+    ? process.env.NEXT_PUBLIC_SITE_URL
+    : "https://compare.comfilux.com.au";
 
 interface PageMetaOptions {
   title: string;

@@ -59,23 +59,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Why use us */}
-      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
-        <h2 className="text-center text-3xl font-bold text-slate-900">
-          Why Use Us?
-        </h2>
-        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {WHY_CARDS.map((card) => (
-            <Card key={card.title}>
-              <h3 className="font-bold text-teal-800">{card.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-600">
-                {card.body}
-              </p>
-            </Card>
-          ))}
-        </div>
-      </section>
-
       {/* How it works */}
       <section className="bg-slate-50 py-20">
         <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
@@ -96,6 +79,23 @@ export default function HomePage() {
           <div className="mt-10">
             <Button href="/compare">Start Comparing</Button>
           </div>
+        </div>
+      </section>
+
+      {/* Why use us */}
+      <section className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+        <h2 className="text-center text-3xl font-bold text-slate-900">
+          Why Use Us?
+        </h2>
+        <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {WHY_CARDS.map((card) => (
+            <Card key={card.title}>
+              <h3 className="font-bold text-teal-800">{card.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-slate-600">
+                {card.body}
+              </p>
+            </Card>
+          ))}
         </div>
       </section>
 

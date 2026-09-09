@@ -55,7 +55,11 @@ export default function SearchBySpeedPage() {
 
       <div className="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-5 text-sm text-slate-600">
         Not sure which speed you need?{" "}
-        <Button href="/compare" variant="secondary" className="mt-3 !px-4 !py-2">
+        <Button
+          href="/compare#questionnaire"
+          variant="secondary"
+          className="mt-3 !px-4 !py-2"
+        >
           Answer a few quick questions instead
         </Button>
       </div>

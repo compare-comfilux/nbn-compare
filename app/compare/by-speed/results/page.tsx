@@ -76,7 +76,7 @@ export default async function SpeedResultsPage({
             ))}
           </div>
           <div className="mt-6">
-            <Button href="/compare" variant="secondary">
+            <Button href="/compare#questionnaire" variant="secondary">
               Answer a Few Questions Instead
             </Button>
           </div>

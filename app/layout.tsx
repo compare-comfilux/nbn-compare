@@ -3,6 +3,7 @@ import "./globals.css";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import Analytics from "@/components/layout/Analytics";
+import ChatWidget from "@/components/chat/ChatWidget";
 import { buildMetadata, SITE_URL } from "@/lib/seo/metadata";
 
 export const metadata: Metadata = {
@@ -26,6 +27,7 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <Footer />
         <Analytics />
+        <ChatWidget />
       </body>
     </html>
   );

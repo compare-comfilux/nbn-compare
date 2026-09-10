@@ -1,11 +1,11 @@
 export default function SpeedDisplay({
   downloadSpeed,
   uploadSpeed,
-  typicalEveningSpeed,
+  uploadSpeedEstimated,
 }: {
   downloadSpeed: number;
   uploadSpeed: number;
-  typicalEveningSpeed?: number;
+  uploadSpeedEstimated?: boolean;
 }) {
   return (
     <div className="grid grid-cols-2 gap-3 text-sm">
@@ -14,19 +14,14 @@ export default function SpeedDisplay({
         <p className="text-slate-500">Download</p>
       </div>
       <div>
-        <p className="font-semibold text-slate-900">{uploadSpeed} Mbps</p>
-        <p className="text-slate-500">Upload</p>
+        <p className="font-semibold text-slate-900">
+          {uploadSpeedEstimated ? "~" : ""}
+          {uploadSpeed} Mbps
+        </p>
+        <p className="text-slate-500">
+          Upload{uploadSpeedEstimated ? " (estimated)" : ""}
+        </p>
       </div>
-      {typicalEveningSpeed !== undefined && (
-        <div className="col-span-2">
-          <p className="text-slate-500">
-            Typical evening speed:{" "}
-            <span className="font-medium text-slate-700">
-              {typicalEveningSpeed} Mbps
-            </span>
-          </p>
-        </div>
-      )}
     </div>
   );
 }

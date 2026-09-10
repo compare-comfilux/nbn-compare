@@ -92,20 +92,31 @@ function pickCategoryWinner(
     }
 
     case "best_families": {
-      const candidates = scored.filter((s) =>
-        s.plan.suitableFor.some((tag) =>
-          ["families", "multiple", "smart home"].some((kw) =>
-            tag.toLowerCase().includes(kw)
-          )
-        )
-      );
-      const pool = candidates.length > 0 ? candidates : scored;
-      return [...pool].sort((a, b) => b.score - a.score)[0];
+      // No curated "suitable for families" tags exist in the real data —
+      // use the objective suitability sub-score instead, which already
+      // reflects household size vs. speed requirement (see scoring.ts).
+      return [...scored].sort(
+        (a, b) => b.breakdown.suitability - a.breakdown.suitability || b.score - a.score
+      )[0];
     }
 
     default:
       return undefined;
   }
+}
+
+/**
+ * Real plan speeds rarely land on a clean number (a "100 Mbps" plan
+ * might report 95 or 98 Mbps). We group plans under the nearest
+ * standard nbn wholesale tier for the "Search by Speed" quick path,
+ * while still displaying each plan's own real, published speed.
+ */
+const STANDARD_SPEED_TIERS = [12, 25, 50, 100, 250, 500, 750, 1000, 2000];
+
+function roundToNearestTier(speed: number): number {
+  return STANDARD_SPEED_TIERS.reduce((closest, tier) =>
+    Math.abs(tier - speed) < Math.abs(closest - speed) ? tier : closest
+  );
 }
 
 export async function getPlansBySpeedTier(speedTier: number): Promise<{
@@ -115,7 +126,9 @@ export async function getPlansBySpeedTier(speedTier: number): Promise<{
 }> {
   const allPlans = await getAllPlans();
 
-  const matchingPlans = allPlans.filter((p) => p.downloadSpeed === speedTier);
+  const matchingPlans = allPlans.filter(
+    (p) => roundToNearestTier(p.downloadSpeed) === speedTier
+  );
 
   // Neutral, generic requirements used purely so the shared scoring
   // engine can rank same-speed plans on price, flexibility and
@@ -134,7 +147,7 @@ export async function getPlansBySpeedTier(speedTier: number): Promise<{
     .sort((a, b) => b.score - a.score);
 
   const availableTiers = Array.from(
-    new Set(allPlans.map((p) => p.downloadSpeed))
+    new Set(allPlans.map((p) => roundToNearestTier(p.downloadSpeed)))
   ).sort((a, b) => a - b);
 
   return { speedTier, matches, availableTiers };

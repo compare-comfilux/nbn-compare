@@ -80,10 +80,8 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
               <th className="px-4 py-3">Ongoing</th>
               <th className="px-4 py-3">Download</th>
               <th className="px-4 py-3">Upload</th>
-              <th className="px-4 py-3">Evening speed</th>
               <th className="px-4 py-3">Contract</th>
               <th className="px-4 py-3">Data</th>
-              <th className="px-4 py-3">Modem</th>
               <th className="px-4 py-3">Setup fee</th>
               <th className="px-4 py-3">Score</th>
               <th className="px-4 py-3" />
@@ -102,13 +100,12 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
                 </td>
                 <td className="px-4 py-3">${plan.ongoingPrice}</td>
                 <td className="px-4 py-3">{plan.downloadSpeed} Mbps</td>
-                <td className="px-4 py-3">{plan.uploadSpeed} Mbps</td>
                 <td className="px-4 py-3">
-                  {plan.typicalEveningSpeed ? `${plan.typicalEveningSpeed} Mbps` : "—"}
+                  {plan.uploadSpeedEstimated ? "~" : ""}
+                  {plan.uploadSpeed} Mbps
                 </td>
                 <td className="px-4 py-3">{plan.contractType}</td>
                 <td className="px-4 py-3">{plan.dataAllowance}</td>
-                <td className="px-4 py-3">{plan.modemIncluded ? "Included" : "Extra"}</td>
                 <td className="px-4 py-3">${plan.setupFee}</td>
                 <td className="px-4 py-3 font-semibold text-teal-800">{score}</td>
                 <td className="px-4 py-3">
@@ -124,6 +121,11 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
           </tbody>
         </table>
       </div>
+
+      <p className="mt-2 hidden text-xs text-slate-400 lg:block">
+        ~ indicates an estimated upload speed where the provider doesn&apos;t
+        publish one.
+      </p>
 
       {/* Mobile cards */}
       <div className="space-y-3 lg:hidden">

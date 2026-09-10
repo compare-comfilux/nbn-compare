@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import type { RecommendationCategory } from "@/types";
+import type { RecommendationCategory, RecommendationResult } from "@/types";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { parseRequirements } from "@/lib/comparison/parseRequirements";
 import { summariseRequirements } from "@/lib/comparison/summarise";
@@ -8,6 +8,8 @@ import { getRecommendations } from "@/lib/comparison/engine";
 import { getAiRecommendation } from "@/lib/ai/aiRecommendationService";
 import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
+import DataAttribution from "@/components/ui/DataAttribution";
+import PlanDataUnavailable from "@/components/ui/PlanDataUnavailable";
 import RecommendationCard from "@/components/comparison/RecommendationCard";
 import ComparisonTable from "@/components/comparison/ComparisonTable";
 
@@ -37,7 +39,13 @@ export default async function ResultsPage({
   }
 
   const requirements = parseRequirements(usp);
-  const result = await getRecommendations(requirements);
+
+  let result: RecommendationResult;
+  try {
+    result = await getRecommendations(requirements);
+  } catch {
+    return <PlanDataUnavailable />;
+  }
 
   let ai = null;
   try {
@@ -129,6 +137,7 @@ export default async function ResultsPage({
         All Suitable Plans
       </h2>
       <ComparisonTable plans={result.eligiblePlans} />
+      <DataAttribution className="mt-4" />
     </div>
   );
 }

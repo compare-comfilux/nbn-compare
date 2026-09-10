@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAllPlanSlugs, getPlanBySlug } from "@/lib/database/plans";
+import { getPlanBySlug } from "@/lib/database/plans";
 import { buildMetadata } from "@/lib/seo/metadata";
+import { describePlan } from "@/lib/comparison/describePlan";
 import PriceDisplay from "@/components/ui/PriceDisplay";
 import SpeedDisplay from "@/components/ui/SpeedDisplay";
 import LastVerified from "@/components/ui/LastVerified";
-import SourceBadge from "@/components/ui/SourceBadge";
+import DataAttribution from "@/components/ui/DataAttribution";
 import Disclaimer from "@/components/ui/Disclaimer";
 import Card from "@/components/ui/Card";
 import Button from "@/components/ui/Button";
 
-export async function generateStaticParams() {
-  const slugs = await getAllPlanSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+// No generateStaticParams: plan data is live and changes over time, so
+// this page is rendered on demand per request rather than pre-baked at
+// build time (the underlying fetch is still cached — see
+// lib/external/ozbroadbandReview.ts).
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({
   params,
@@ -40,16 +42,20 @@ export default async function PlanDetailPage({
   const plan = await getPlanBySlug(slug);
   if (!plan) notFound();
 
+  const tags = describePlan(plan);
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
-      {plan.isDemoData && (
+      {plan.promoCode && (
         <span className="mb-4 inline-flex items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-          Demo data — not currently available for purchase
+          Promo code: {plan.promoCode}
         </span>
       )}
 
       <p className="text-sm text-slate-500">{plan.provider}</p>
       <h1 className="mt-1 text-3xl font-bold text-slate-900">{plan.planName}</h1>
+
+      <p className="mt-2 text-sm text-slate-600">{tags.join(" • ")}</p>
 
       <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <Card>
@@ -64,7 +70,7 @@ export default async function PlanDetailPage({
           <SpeedDisplay
             downloadSpeed={plan.downloadSpeed}
             uploadSpeed={plan.uploadSpeed}
-            typicalEveningSpeed={plan.typicalEveningSpeed}
+            uploadSpeedEstimated={plan.uploadSpeedEstimated}
           />
         </Card>
       </div>
@@ -74,14 +80,7 @@ export default async function PlanDetailPage({
           ["Data allowance", plan.dataAllowance],
           ["Contract", plan.contractType],
           ["Setup fee", `$${plan.setupFee}`],
-          [
-            "Modem",
-            plan.modemIncluded
-              ? "Included"
-              : plan.modemCost
-                ? `$${plan.modemCost} extra`
-                : "Not included",
-          ],
+          ["Technology", `${plan.technology} · ${plan.subTechnology}`],
         ].map(([label, value]) => (
           <div key={label} className="rounded-lg border border-slate-200 p-4">
             <p className="text-xs text-slate-400">{label}</p>
@@ -90,70 +89,29 @@ export default async function PlanDetailPage({
         ))}
       </div>
 
-      <div className="mt-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-          NBN technology
-        </p>
-        <p className="mt-1 text-sm text-slate-700">
-          {plan.nbnTechnology.join(", ")}
-        </p>
-      </div>
-
-      <div className="mt-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Features
-        </p>
-        <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-700">
-          {plan.features.map((f) => (
-            <li key={f}>{f}</li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
-        <div>
-          <p className="text-sm font-bold text-teal-800">Pros</p>
+      {plan.features.length > 0 && (
+        <div className="mt-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Features
+          </p>
           <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-700">
-            {plan.pros.map((p) => (
-              <li key={p}>{p}</li>
+            {plan.features.map((f) => (
+              <li key={f}>{f}</li>
             ))}
           </ul>
         </div>
-        <div>
-          <p className="text-sm font-bold text-slate-500">Cons</p>
-          <ul className="mt-2 list-inside list-disc space-y-1 text-sm text-slate-700">
-            {plan.cons.map((c) => (
-              <li key={c}>{c}</li>
-            ))}
-          </ul>
-        </div>
-      </div>
-
-      <div className="mt-8 space-y-3">
-        <div>
-          <p className="text-sm font-bold text-slate-900">Who this plan may suit</p>
-          <p className="mt-1 text-sm text-slate-600">{plan.whoThisSuits}</p>
-        </div>
-        <div>
-          <p className="text-sm font-bold text-slate-900">
-            Who should consider another plan
-          </p>
-          <p className="mt-1 text-sm text-slate-600">
-            {plan.whoShouldConsiderAnother}
-          </p>
-        </div>
-      </div>
+      )}
 
       <div className="mt-8 flex items-center gap-3">
         <LastVerified date={plan.lastVerified} />
-        <SourceBadge sourceName={plan.sourceName} sourceUrl={plan.sourceUrl} />
       </div>
+      <DataAttribution className="mt-1" />
 
       <Disclaimer className="mt-6" />
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Button href={plan.sourceUrl} className="flex-1">
-          View Plan
+          View on Oz Broadband Review
         </Button>
         <Button href="/compare" variant="secondary" className="flex-1">
           Back to Comparison

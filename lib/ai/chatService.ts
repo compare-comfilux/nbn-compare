@@ -1,6 +1,6 @@
 import { getAllPlans } from "@/lib/database/plans";
 import { SCORING_WEIGHTS } from "@/lib/comparison/weights";
-import { GUIDE_TOPICS } from "@/data/demo-plans/guides";
+import { GUIDE_TOPICS } from "@/data/guides";
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -16,18 +16,23 @@ const MAX_HISTORY = 10;
 
 /**
  * Builds a compact, structured summary of the live app data so the
- * assistant answers using real information rather than guessing.
- * Kept intentionally short to control token usage.
+ * assistant answers using real information rather than guessing. With
+ * a real catalogue potentially spanning hundreds of plans, we send
+ * aggregate stats plus a handful of representative examples rather
+ * than the full list, to keep token usage under control.
  */
 async function buildSystemPrompt(): Promise<string> {
   const plans = await getAllPlans();
 
-  const planSummary = plans
-    .map(
-      (p) =>
-        `- ${p.provider} "${p.planName}": $${p.ongoingPrice}/mo ongoing, ${p.downloadSpeed}/${p.uploadSpeed} Mbps, ${p.contractType}, best for: ${p.suitableFor.join(", ")}${p.isDemoData ? " [DEMO DATA]" : ""}`
-    )
-    .join("\n");
+  const providers = new Set(plans.map((p) => p.provider));
+  const prices = plans.map((p) => p.ongoingPrice);
+  const speeds = plans.map((p) => p.downloadSpeed);
+
+  const cheapest = [...plans].sort((a, b) => a.ongoingPrice - b.ongoingPrice)[0];
+  const fastest = [...plans].sort((a, b) => b.downloadSpeed - a.downloadSpeed)[0];
+
+  const describeExample = (p: (typeof plans)[number]) =>
+    `${p.provider} "${p.planName}": $${p.ongoingPrice}/mo, ${p.downloadSpeed}/${p.uploadSpeed}${p.uploadSpeedEstimated ? " (upload estimated)" : ""} Mbps, ${p.contractType}`;
 
   const weightsSummary = Object.entries(SCORING_WEIGHTS)
     .map(([k, v]) => `${k}: ${Math.round(v * 100)}%`)
@@ -35,7 +40,7 @@ async function buildSystemPrompt(): Promise<string> {
 
   return `You are the help assistant embedded on Compare NBN, an independent Australian NBN plan comparison website.
 
-Your job: answer questions about how the website works, help people decide which comparison path to use, and explain plan comparisons — using ONLY the structured data below. Never invent prices, speeds, contract terms or provider claims that aren't in this data.
+Your job: answer questions about how the website works, help people decide which comparison path to use, and explain plan comparisons — using ONLY the structured data below. Never invent specific prices, speeds or contract terms beyond what's given here; for exact figures on a specific plan, direct people to that plan's page or the comparison results.
 
 ABOUT THE SITE:
 - Independent comparison platform. Providers CANNOT pay for a better ranking.
@@ -44,17 +49,21 @@ ABOUT THE SITE:
   2. The questionnaire (/compare) — for people who aren't sure, answering a few questions about household size, usage, devices and budget.
 - Scoring model weights: ${weightsSummary}. Full detail at /methodology.
 - AI never invents plan facts — it only explains structured comparison data.
-- All current plan data is DEMO DATA for development — clearly labelled, not real commercial offers yet.
+- Plan data is sourced live from Oz Broadband Review's public API and refreshed regularly — it's real, current residential NBN plan data, not a demo, though it only covers the providers that source tracks.
+- Upload speed isn't always published per plan; where it's not, this site shows a clearly-flagged estimate based on standard nbn tiers.
 - Guides available at /guides: ${GUIDE_TOPICS.join("; ")}.
 - Legal/info pages: /how-it-works, /methodology, /about, /privacy, /terms, /disclaimer, /contact.
 
-CURRENT DEMO PLANS IN THE DATABASE:
-${planSummary}
+CURRENT CATALOGUE (live snapshot):
+- ${plans.length} residential NBN plans across ${providers.size} providers.
+- Price range: $${Math.min(...prices)}–$${Math.max(...prices)}/month. Speed range: ${Math.min(...speeds)}–${Math.max(...speeds)} Mbps.
+- Cheapest plan right now: ${describeExample(cheapest)}.
+- Fastest plan right now: ${describeExample(fastest)}.
 
 STYLE:
 - Be concise, warm and plain-English. Prefer 2-4 short sentences or a short list.
 - If asked something not covered by this data, say so honestly and suggest where on the site they could find out (e.g. "check the plan page" or "try our Search by Speed tool").
-- If someone wants a personalised recommendation, direct them to /compare or /compare/by-speed rather than guessing yourself.
+- If someone wants a personalised recommendation or the exact current cheapest/fastest plan, direct them to /compare or /compare/by-speed rather than guessing yourself — the live catalogue changes over time.
 - Never claim a plan is "the best" outright — describe it in terms of the comparison categories (best value, cheapest suitable, etc.) per the site's methodology.
 - Remind people (briefly, only if relevant) that plan details should be confirmed with the provider before signing up.`;
 }
@@ -86,12 +95,12 @@ function buildMockReply(userMessage: string): string {
     {
       keywords: ["demo", "real", "fake", "not real"],
       reply:
-        "Good question — every plan currently in our database is clearly labelled demo data, used for building and testing the comparison tool. Nothing here is available for purchase yet.",
+        "Yes — plan data comes live from Oz Broadband Review's public API and is refreshed regularly. It's real, current residential NBN plan data, but always confirm final pricing and availability with the provider before signing up.",
     },
     {
       keywords: ["contract", "lock-in", "lock in"],
       reply:
-        "Most demo plans in our database are no lock-in contracts, which score highest on our flexibility factor. Check each plan's detail page for its exact contract terms.",
+        "Many NBN plans are no lock-in contracts, which score highest on our flexibility factor. Check each plan's detail page for its exact contract terms.",
     },
     {
       keywords: ["gaming", "game"],

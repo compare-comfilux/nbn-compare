@@ -3,7 +3,7 @@
  * "I know exactly what speed I want" quick path on /compare/by-speed.
  *
  * These are the common tiers nbn wholesale offers; not every tier will
- * necessarily have a matching plan in the current (demo) database —
+ * necessarily have a matching plan in the current live catalogue —
  * see getPlansBySpeedTier's availableTiers fallback for that case.
  */
 export const SPEED_TIERS = [25, 50, 100, 250, 500, 1000] as const;

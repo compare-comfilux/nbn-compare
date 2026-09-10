@@ -3,7 +3,7 @@ export interface Guide {
   title: string;
   excerpt: string;
   body: string[];
-  isDemo: boolean;
+  // Editorial guide content written for this site (not sourced from the plans API).
 }
 
 export const GUIDE_TOPICS = [
@@ -19,13 +19,12 @@ export const GUIDE_TOPICS = [
   "What Does Unlimited Data Really Mean?",
 ];
 
-export const DEMO_GUIDES: Guide[] = [
+export const GUIDES: Guide[] = [
   {
     slug: "how-much-nbn-speed-do-i-need",
     title: "How Much NBN Speed Do I Need?",
     excerpt:
       "A quick way to think about speed tiers based on household size and usage.",
-    isDemo: true,
     body: [
       "The right NBN speed tier depends far more on how many people and devices are active at once than on any single number. A single person browsing and streaming standard-definition video is usually comfortable on an entry-level tier, while a household of four running video calls, 4K streaming and gaming at the same time will feel a bigger difference from a mid-to-high tier plan.",
       "Rather than chasing the fastest available speed, it's worth matching the plan to your typical evening usage — the busiest time of day for most households. Our comparison tool factors in your household size and selected usage types when suggesting suitable plans.",
@@ -36,7 +35,6 @@ export const DEMO_GUIDES: Guide[] = [
     slug: "fttp-vs-fttn-vs-hfc-explained",
     title: "FTTP vs FTTN vs HFC Explained",
     excerpt: "The main NBN connection technologies, explained simply.",
-    isDemo: true,
     body: [
       "NBN is delivered over several different technologies depending on your address, and the technology available to you affects which plans and maximum speeds you can access.",
       "FTTP (Fibre to the Premises) runs fibre optic cable all the way to your home and generally supports the highest speed tiers, including higher upload speeds. HFC (Hybrid Fibre Coaxial) uses the existing pay-TV cable network for the final stretch and also supports high speed tiers in most areas.",
@@ -48,7 +46,6 @@ export const DEMO_GUIDES: Guide[] = [
     slug: "what-does-unlimited-data-really-mean",
     title: "What Does Unlimited Data Really Mean?",
     excerpt: "Understanding data allowances, fair use policies and throttling.",
-    isDemo: true,
     body: [
       "Most modern NBN plans in Australia are advertised as having unlimited data, meaning there's no hard monthly data cap that cuts off your connection. This has become the standard offering from most providers.",
       "However, 'unlimited' doesn't always mean unrestricted at every moment — some providers apply fair use policies for very unusual, sustained high-volume usage, and connection speeds can still vary during network congestion regardless of your data allowance.",
@@ -58,5 +55,5 @@ export const DEMO_GUIDES: Guide[] = [
 ];
 
 export function getGuideBySlug(slug: string): Guide | undefined {
-  return DEMO_GUIDES.find((g) => g.slug === slug);
+  return GUIDES.find((g) => g.slug === slug);
 }

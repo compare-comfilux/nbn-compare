@@ -32,9 +32,10 @@ export default function DisclaimerPage() {
         </p>
         <p>Provider terms and conditions apply to any plan you purchase.</p>
         <p>
-          Some plans shown on this website are clearly labelled demo data,
-          used for development and testing, and are not currently available
-          for purchase.
+          Plan data on this website is sourced live from Oz Broadband
+          Review&apos;s public plans API and refreshed regularly, but it does
+          not cover every retail provider in Australia — only the providers
+          that source tracks.
         </p>
       </div>
     </div>

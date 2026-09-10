@@ -1,4 +1,4 @@
-import type { CustomerRequirements, NbnPlan, ScoredPlan } from "@/types";
+import type { CustomerRequirements, NbnPlan, ScoredPlan, UsageType } from "@/types";
 import { SCORING_WEIGHTS } from "./weights";
 
 /**
@@ -7,6 +7,12 @@ import { SCORING_WEIGHTS } from "./weights";
  * Every sub-score is normalised to a 0-100 scale before weights are
  * applied, so the final score is always comparable across plans and
  * always sits between 0 and 100.
+ *
+ * All inputs here are objective, published (or clearly-flagged
+ * estimated) facts about each plan — see lib/external/ozbroadbandReview.ts
+ * for exactly what's real vs. estimated. Nothing in this file relies on
+ * curated editorial tags; suitability is computed purely from speed vs.
+ * a usage-implied speed requirement.
  *
  * This is an MVP methodology, not a claim of objective perfection —
  * see /methodology. It is designed to be transparent and easy to
@@ -44,51 +50,49 @@ function scoreUploadSpeed(plan: NbnPlan, allPlans: NbnPlan[]): number {
 }
 
 /**
- * How well the plan's stated "suitableFor" tags and speed match the
- * customer's selected usage types and household size.
+ * Additional Mbps a usage type implies on top of a light baseline, used
+ * to compute an objective "required speed" for the household — not a
+ * curated per-plan tag, just arithmetic over the customer's own answers.
+ */
+const USAGE_SPEED_LOAD: Record<UsageType, number> = {
+  browsing: 5,
+  streaming: 15,
+  streaming_4k: 25,
+  gaming: 15,
+  wfh: 15,
+  video_calls: 10,
+  study: 10,
+  large_downloads: 20,
+  cloud_backup: 20,
+  smart_home: 10,
+};
+
+const HOUSEHOLD_BASELINE: Record<CustomerRequirements["householdSize"], number> = {
+  "1": 10,
+  "2": 15,
+  "3-4": 25,
+  "5+": 35,
+};
+
+/**
+ * How well the plan's speed matches the household's computed speed
+ * requirement, derived entirely from their own questionnaire answers
+ * (household size baseline + sum of selected usage loads). A plan right
+ * at the requirement scores around 70; comfortable headroom scores up
+ * to 100; falling short scores down toward 0.
  */
 function scoreSuitability(plan: NbnPlan, requirements: CustomerRequirements): number {
-  let score = 50; // baseline
+  const usageLoad = requirements.usageTypes.reduce(
+    (sum, usage) => sum + (USAGE_SPEED_LOAD[usage] ?? 5),
+    0
+  );
+  const requiredSpeed = HOUSEHOLD_BASELINE[requirements.householdSize] + usageLoad;
 
-  const usageMatchers: Record<string, string[]> = {
-    browsing: ["browsing", "email", "single user"],
-    streaming: ["streaming", "families", "couples"],
-    streaming_4k: ["4k streaming", "families", "multiple simultaneous 4k streams"],
-    gaming: ["gaming", "streaming while gaming"],
-    wfh: ["working from home", "video calls"],
-    video_calls: ["video calls", "working from home"],
-    study: ["browsing", "video calls", "working from home"],
-    large_downloads: ["large downloads", "cloud backup"],
-    cloud_backup: ["cloud backup", "large downloads"],
-    smart_home: ["smart home devices", "families"],
-  };
+  const ratio = plan.downloadSpeed / requiredSpeed;
 
-  const suitableForLower = plan.suitableFor.map((s) => s.toLowerCase());
-
-  for (const usage of requirements.usageTypes) {
-    const keywords = usageMatchers[usage] ?? [];
-    const matched = keywords.some((kw) =>
-      suitableForLower.some((tag) => tag.includes(kw))
-    );
-    score += matched ? 8 : -2;
-  }
-
-  // Household size vs typical evening speed as a rough proxy for headroom.
-  const householdMultiplier: Record<CustomerRequirements["householdSize"], number> = {
-    "1": 15,
-    "2": 25,
-    "3-4": 50,
-    "5+": 80,
-  };
-  const requiredHeadroom = householdMultiplier[requirements.householdSize];
-  const availableSpeed = plan.typicalEveningSpeed ?? plan.downloadSpeed;
-  if (availableSpeed >= requiredHeadroom) {
-    score += 15;
-  } else {
-    score -= 15;
-  }
-
-  return clamp(score);
+  if (ratio >= 2) return 100;
+  if (ratio >= 1) return 70 + (ratio - 1) * 30; // 70-100 as headroom grows
+  return clamp(ratio * 70); // under the requirement: scales down toward 0
 }
 
 /** No lock-in contracts score highest; longer contracts score lower. */
@@ -105,12 +109,12 @@ function scoreFlexibility(plan: NbnPlan): number {
   }
 }
 
-/** More included features/inclusions (modem, etc.) scores higher. */
+/** More included, objectively-computed features score higher. */
 function scoreFeatures(plan: NbnPlan): number {
-  let score = 40;
-  if (plan.modemIncluded) score += 25;
-  if (plan.setupFee === 0) score += 15;
-  score += Math.min(plan.features.length * 5, 20);
+  let score = 45;
+  if (plan.setupFee === 0) score += 20;
+  if (plan.introductoryPrice) score += 10;
+  score += Math.min(plan.features.length * 5, 25);
   return clamp(score);
 }
 

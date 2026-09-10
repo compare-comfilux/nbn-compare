@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { DEMO_GUIDES, getGuideBySlug } from "@/data/demo-plans/guides";
+import { GUIDES, getGuideBySlug } from "@/data/guides";
 import Button from "@/components/ui/Button";
 
 export async function generateStaticParams() {
-  return DEMO_GUIDES.map((g) => ({ slug: g.slug }));
+  return GUIDES.map((g) => ({ slug: g.slug }));
 }
 
 export async function generateMetadata({

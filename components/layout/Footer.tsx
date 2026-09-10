@@ -1,4 +1,5 @@
 import Link from "next/link";
+import DataAttribution from "@/components/ui/DataAttribution";
 
 const COLUMNS = [
   {
@@ -71,6 +72,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Compare NBN, a comfilux.com.au
             project. All rights reserved.
           </p>
+          <DataAttribution className="mt-2" />
         </div>
       </div>
     </footer>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { buildMetadata } from "@/lib/seo/metadata";
-import { DEMO_GUIDES, GUIDE_TOPICS } from "@/data/demo-plans/guides";
+import { GUIDES, GUIDE_TOPICS } from "@/data/guides";
 import Card from "@/components/ui/Card";
 
 export const metadata: Metadata = buildMetadata({
@@ -11,7 +11,7 @@ export const metadata: Metadata = buildMetadata({
 });
 
 export default function GuidesPage() {
-  const demoSlugSet = new Set(DEMO_GUIDES.map((g) => g.title));
+  const availableTitles = new Set(GUIDES.map((g) => g.title));
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6">
@@ -23,8 +23,8 @@ export default function GuidesPage() {
 
       <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {GUIDE_TOPICS.map((topic) => {
-          const guide = DEMO_GUIDES.find((g) => g.title === topic);
-          const isLive = demoSlugSet.has(topic) && guide;
+          const guide = GUIDES.find((g) => g.title === topic);
+          const isLive = availableTitles.has(topic) && guide;
 
           return (
             <Card key={topic} className="flex flex-col justify-between">

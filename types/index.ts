@@ -4,30 +4,24 @@
 // NBN plans (mobile, energy, insurance, etc). Where a generic name makes
 // sense we use it (Product, Provider, ComparisonEngine) even though today
 // every Product is an NBN plan. See methodology/roadmap docs.
+//
+// DATA PROVENANCE: plan data is sourced live from the Oz Broadband Review
+// public plans API (see lib/external/ozbroadbandReview.ts). That feed does
+// NOT include: upload speed as a distinct field, modem details, or curated
+// "pros/cons/suitable for" copy. Fields below reflect only what is actually
+// published or objectively computable from it — nothing here is invented
+// editorial content. See /methodology for exactly how each field is derived.
 
-export type NbnTechnology =
-  | "FTTP"
-  | "HFC"
-  | "FTTC"
-  | "FTTN"
-  | "FTTB"
-  | "Fixed Wireless"
-  | "Satellite";
-
-export type ContractType = "No lock-in" | "12 months" | "24 months";
+export type ContractType = "No lock-in" | "12 months" | "24 months" | string;
 
 export interface Provider {
   id: string;
   name: string;
   slug: string;
-  website: string;
-  logo?: string;
-  description: string;
-  active: boolean;
 }
 
 /**
- * A single comparable product (currently always an NBN plan).
+ * A single comparable product (currently always a residential NBN plan).
  * Field names are intentionally generic-friendly for future categories.
  */
 export interface NbnPlan {
@@ -37,42 +31,33 @@ export interface NbnPlan {
   planName: string;
   slug: string;
 
-  monthlyPrice: number; // ongoing price shown as the "sticker" price
+  monthlyPrice: number; // = ongoingPrice; kept for display components that show a headline price
   introductoryPrice?: number;
   introductoryPeriodMonths?: number;
   ongoingPrice: number;
 
-  downloadSpeed: number; // Mbps
-  uploadSpeed: number; // Mbps
-  typicalEveningSpeed?: number; // Mbps, self-reported / ACCC-style metric
+  downloadSpeed: number; // Mbps, as published by the source
+  uploadSpeed: number; // Mbps — parsed from the plan name if published, otherwise estimated
+  uploadSpeedEstimated: boolean; // true if uploadSpeed above is an estimate, not a published figure
 
   dataAllowance: "Unlimited" | string;
 
   contractType: ContractType;
   setupFee: number;
 
-  modemIncluded: boolean;
-  modemCost?: number;
+  technology: string; // e.g. "NBN" as reported by the source
+  subTechnology: string; // e.g. "Fixed Line", "Fixed Wireless", "Private Fibre" — as reported, not address-verified
 
-  nbnTechnology: NbnTechnology[];
+  promoCode?: string;
 
+  /** Computed, rule-based facts derived from the fields above (not marketing copy). */
   features: string[];
-  suitableFor: string[]; // e.g. "Families", "Gaming", "Working from home"
 
-  pros: string[];
-  cons: string[];
-  whoThisSuits: string;
-  whoShouldConsiderAnother: string;
-
-  sourceUrl: string;
+  sourceUrl: string; // links to the source's review/plan page, not necessarily the provider's own site
   sourceName: string;
   lastVerified: string; // ISO date string
 
-  isDemoData: boolean;
   active: boolean;
-
-  createdAt: string;
-  updatedAt: string;
 }
 
 // ---- Questionnaire / customer requirements ----

@@ -70,10 +70,12 @@ function buildMockResponse(input: AiRecommendationInput): AiRecommendationOutput
     plan.contractType === "No lock-in"
       ? "No lock-in contract, so you can switch later without penalty."
       : `This plan has a ${plan.contractType} contract.`,
-    plan.modemIncluded
-      ? "A modem is included, reducing upfront setup costs."
-      : `A modem is not included${plan.modemCost ? ` (approx. $${plan.modemCost})` : ""}.`,
-    "Confirm address-level availability and current pricing directly with the provider before signing up.",
+    plan.uploadSpeedEstimated
+      ? `Upload speed (${plan.uploadSpeed} Mbps) is an estimate — the provider doesn't publish an exact figure for this plan.`
+      : `Published upload speed: ${plan.uploadSpeed} Mbps.`,
+    plan.promoCode
+      ? `A promo code (${plan.promoCode}) is currently available for this plan.`
+      : "Confirm address-level availability and current pricing directly with the provider before signing up.",
   ];
 
   return { recommendation, reasoning, considerations, source: "mock" };

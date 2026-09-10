@@ -4,6 +4,8 @@ import { buildMetadata } from "@/lib/seo/metadata";
 import { getPlansBySpeedTier } from "@/lib/comparison/engine";
 import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
+import DataAttribution from "@/components/ui/DataAttribution";
+import PlanDataUnavailable from "@/components/ui/PlanDataUnavailable";
 import PlanCard from "@/components/comparison/PlanCard";
 import ComparisonTable from "@/components/comparison/ComparisonTable";
 
@@ -38,7 +40,12 @@ export default async function SpeedResultsPage({
     );
   }
 
-  const { matches, availableTiers } = await getPlansBySpeedTier(speedTier);
+  let matches, availableTiers;
+  try {
+    ({ matches, availableTiers } = await getPlansBySpeedTier(speedTier));
+  } catch {
+    return <PlanDataUnavailable />;
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
@@ -58,7 +65,7 @@ export default async function SpeedResultsPage({
       {matches.length === 0 ? (
         <div className="mt-10 rounded-xl border border-slate-200 bg-slate-50 p-8 text-center">
           <p className="font-semibold text-slate-900">
-            No plans found at exactly {speedTier} Mbps
+            No plans found at the {speedTier} Mbps tier
           </p>
           <p className="mt-2 text-sm text-slate-600">
             Try one of the speeds below, or answer a few quick questions for
@@ -84,8 +91,10 @@ export default async function SpeedResultsPage({
       ) : (
         <>
           <p className="mt-2 text-slate-600">
-            {matches.length} plan{matches.length === 1 ? "" : "s"} available at{" "}
-            {speedTier} Mbps, ranked by price, flexibility and features.
+            {matches.length} plan{matches.length === 1 ? "" : "s"} at the{" "}
+            {speedTier} Mbps tier, ranked by price, flexibility and features.
+            Plans are grouped by their nearest standard speed tier — exact
+            published speeds are shown on each card.
           </p>
 
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -106,6 +115,7 @@ export default async function SpeedResultsPage({
               <ComparisonTable plans={matches} />
             </div>
           )}
+          <DataAttribution className="mt-6" />
         </>
       )}
     </div>

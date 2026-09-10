@@ -6,6 +6,7 @@ import SpeedDisplay from "@/components/ui/SpeedDisplay";
 import LastVerified from "@/components/ui/LastVerified";
 import SourceBadge from "@/components/ui/SourceBadge";
 import Button from "@/components/ui/Button";
+import { describePlan } from "@/lib/comparison/describePlan";
 
 export default function PlanCard({
   scoredPlan,
@@ -15,6 +16,7 @@ export default function PlanCard({
   badge?: string;
 }) {
   const { plan, score } = scoredPlan;
+  const tags = describePlan(plan);
 
   return (
     <Card className="flex flex-col gap-4">
@@ -24,9 +26,9 @@ export default function PlanCard({
         </span>
       )}
 
-      {plan.isDemoData && (
+      {plan.promoCode && (
         <span className="inline-flex w-fit items-center rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-800">
-          Demo data — not currently available for purchase
+          Promo code: {plan.promoCode}
         </span>
       )}
 
@@ -48,27 +50,26 @@ export default function PlanCard({
       <SpeedDisplay
         downloadSpeed={plan.downloadSpeed}
         uploadSpeed={plan.uploadSpeed}
-        typicalEveningSpeed={plan.typicalEveningSpeed}
+        uploadSpeedEstimated={plan.uploadSpeedEstimated}
       />
 
       <div>
         <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
           Best for
         </p>
-        <p className="mt-1 text-sm text-slate-700">
-          {plan.suitableFor.join(" • ")}
-        </p>
+        <p className="mt-1 text-sm text-slate-700">{tags.join(" • ")}</p>
       </div>
 
-      <div>
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-          Why we like it
-        </p>
-        <p className="mt-1 text-sm leading-relaxed text-slate-600">
-          {plan.pros[0]}
-          {plan.contractType === "No lock-in" ? " Plus no lock-in contract." : ""}
-        </p>
-      </div>
+      {plan.features.length > 0 && (
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+            Features
+          </p>
+          <p className="mt-1 text-sm leading-relaxed text-slate-600">
+            {plan.features.join(" • ")}
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center justify-between border-t border-slate-100 pt-3">
         <div className="flex flex-col gap-0.5">

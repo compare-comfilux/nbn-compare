@@ -96,8 +96,8 @@ export default async function ResultsPage({
       </Alert>
 
       {ai && (
-        <div className="mb-10 rounded-xl border border-teal-200 bg-teal-50 p-6">
-          <p className="text-xs font-semibold uppercase tracking-wide text-teal-700">
+        <div className="mb-10 rounded-xl border border-signal/20 bg-signal-tint p-6">
+          <p className="text-xs font-semibold uppercase tracking-wide text-signal">
             AI-assisted summary
           </p>
           <p className="mt-2 text-slate-800">{ai.recommendation}</p>

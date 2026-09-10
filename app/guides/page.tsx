@@ -38,7 +38,7 @@ export default function GuidesPage() {
                 {isLive ? (
                   <Link
                     href={`/guides/${guide!.slug}`}
-                    className="text-sm font-medium text-teal-700 hover:underline"
+                    className="text-sm font-medium text-signal hover:underline"
                   >
                     Read guide →
                   </Link>

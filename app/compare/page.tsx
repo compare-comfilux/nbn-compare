@@ -25,9 +25,9 @@ export default function ComparePage() {
       <div className="mx-auto mb-14 grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/compare/by-speed"
-          className="flex flex-col rounded-2xl border-2 border-teal-700 bg-teal-50/40 p-6 transition-colors hover:bg-teal-50"
+          className="flex flex-col rounded-2xl border-2 border-signal bg-signal-tint/60 p-6 transition-colors hover:bg-signal-tint"
         >
-          <span className="inline-flex w-fit items-center rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white">
+          <span className="inline-flex w-fit items-center rounded-full bg-signal px-3 py-1 text-xs font-semibold text-white">
             I know my speed
           </span>
           <h2 className="mt-4 text-lg font-bold text-slate-900">
@@ -37,7 +37,7 @@ export default function ComparePage() {
             Already know the exact NBN speed you want (e.g. 100 Mbps)? Pick a
             speed tier and see matching plans immediately.
           </p>
-          <span className="mt-4 text-sm font-semibold text-teal-700">
+          <span className="mt-4 text-sm font-semibold text-signal">
             Search by speed →
           </span>
         </Link>

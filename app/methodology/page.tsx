@@ -50,7 +50,7 @@ export default function MethodologyPage() {
             href="https://www.ozbroadbandreview.com/"
             target="_blank"
             rel="noopener"
-            className="text-teal-700 underline"
+            className="text-signal underline"
           >
             Oz Broadband Review&apos;s
           </a>{" "}
@@ -118,7 +118,7 @@ export default function MethodologyPage() {
                 className="flex items-center justify-between py-2 text-sm"
               >
                 <span className="text-slate-700">{row.label}</span>
-                <span className="font-semibold text-teal-800">
+                <span className="font-semibold text-signal-dark">
                   {Math.round(SCORING_WEIGHTS[row.key] * 100)}%
                 </span>
               </li>

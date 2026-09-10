@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 type Tone = "info" | "warning" | "neutral";
 
 const TONE_CLASSES: Record<Tone, string> = {
-  info: "bg-teal-50 border-teal-200 text-teal-900",
+  info: "bg-signal-tint border-signal/20 text-signal-dark",
   warning: "bg-amber-50 border-amber-200 text-amber-900",
   neutral: "bg-slate-50 border-slate-200 text-slate-700",
 };

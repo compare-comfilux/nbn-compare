@@ -49,7 +49,7 @@ export default async function SpeedResultsPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-      <Link href="/compare/by-speed" className="text-sm text-teal-700 hover:underline">
+      <Link href="/compare/by-speed" className="text-sm text-signal hover:underline">
         ← Choose a different speed
       </Link>
 
@@ -76,7 +76,7 @@ export default async function SpeedResultsPage({
               <Link
                 key={tier}
                 href={`/compare/by-speed/results?speed=${tier}`}
-                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-teal-400"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-signal/50"
               >
                 {tier} Mbps
               </Link>

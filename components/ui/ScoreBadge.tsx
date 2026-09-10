@@ -1,7 +1,7 @@
 export default function ScoreBadge({ score }: { score: number }) {
   const color =
     score >= 80
-      ? "bg-teal-100 text-teal-800"
+      ? "bg-data-tint text-data-dark"
       : score >= 60
         ? "bg-amber-100 text-amber-800"
         : "bg-slate-100 text-slate-700";

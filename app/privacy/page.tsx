@@ -71,7 +71,7 @@ export default function PrivacyPage() {
           <h2 className="text-lg font-bold text-slate-900">Contact</h2>
           <p className="mt-2">
             For privacy-related questions, use our{" "}
-            <a href="/contact" className="text-teal-700 underline">
+            <a href="/contact" className="text-signal underline">
               contact form
             </a>
             .

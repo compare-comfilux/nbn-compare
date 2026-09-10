@@ -5,15 +5,15 @@ type Variant = "primary" | "secondary" | "ghost";
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    "bg-teal-700 text-white hover:bg-teal-800 focus-visible:outline-teal-700",
+    "bg-signal text-white shadow-md shadow-signal/20 hover:bg-signal-dark hover:shadow-lg hover:shadow-signal/25 focus-visible:outline-signal",
   secondary:
-    "bg-white text-teal-800 border border-teal-700 hover:bg-teal-50 focus-visible:outline-teal-700",
+    "bg-white text-signal border border-signal/30 hover:border-signal hover:bg-signal-tint focus-visible:outline-signal",
   ghost:
-    "bg-transparent text-slate-700 hover:bg-slate-100 focus-visible:outline-slate-400",
+    "bg-transparent text-slate-600 hover:bg-slate-100 focus-visible:outline-slate-400",
 };
 
 const BASE =
-  "inline-flex items-center justify-center gap-2 rounded-lg px-5 py-3 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  "inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:opacity-50 disabled:pointer-events-none";
 
 interface LinkButtonProps {
   href: string;

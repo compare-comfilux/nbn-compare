@@ -35,7 +35,7 @@ export default function Footer() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4">
           <div className="col-span-2 sm:col-span-1">
             <p className="flex items-center gap-2 font-bold text-slate-900">
-              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-teal-700 text-xs text-white">
+              <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-signal text-xs text-white">
                 NC
               </span>
               Compare NBN
@@ -56,7 +56,7 @@ export default function Footer() {
                   <li key={link.href}>
                     <Link
                       href={link.href}
-                      className="text-sm text-slate-500 hover:text-teal-800"
+                      className="text-sm text-slate-500 hover:text-signal-dark"
                     >
                       {link.label}
                     </Link>

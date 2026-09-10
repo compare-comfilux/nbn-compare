@@ -82,15 +82,15 @@ export default function ChatWidget() {
       {open && (
         <div className="flex h-[28rem] w-[calc(100vw-2.5rem)] max-w-sm flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-xl">
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 bg-teal-700 px-4 py-3">
+          <div className="flex items-center justify-between border-b border-slate-100 bg-signal px-4 py-3">
             <div>
               <p className="text-sm font-semibold text-white">Compare NBN Assistant</p>
-              <p className="text-xs text-teal-100">Ask about plans or how the site works</p>
+              <p className="text-xs text-signal-tint">Ask about plans or how the site works</p>
             </div>
             <button
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="rounded-full p-1 text-teal-100 hover:bg-teal-800 hover:text-white"
+              className="rounded-full p-1 text-signal-tint hover:bg-signal-dark hover:text-white"
             >
               <X size={18} />
             </button>
@@ -106,7 +106,7 @@ export default function ChatWidget() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-3 py-2 text-sm leading-relaxed ${
                     m.role === "user"
-                      ? "bg-teal-700 text-white"
+                      ? "bg-signal text-white"
                       : "bg-slate-100 text-slate-700"
                   }`}
                 >
@@ -134,13 +134,13 @@ export default function ChatWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask a question…"
                 maxLength={500}
-                className="flex-1 rounded-full border border-slate-200 px-4 py-2 text-sm focus:border-teal-600 focus:outline-none"
+                className="flex-1 rounded-full border border-slate-200 px-4 py-2 text-sm focus:border-signal focus:outline-none"
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
                 aria-label="Send message"
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-700 text-white transition-colors hover:bg-teal-800 disabled:opacity-40"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-signal text-white transition-colors hover:bg-signal-dark disabled:opacity-40"
               >
                 <Send size={16} />
               </button>
@@ -157,7 +157,7 @@ export default function ChatWidget() {
       <button
         onClick={toggleOpen}
         aria-label={open ? "Close chat" : "Open chat"}
-        className="flex h-14 w-14 items-center justify-center rounded-full bg-teal-700 text-white shadow-lg transition-transform hover:scale-105 hover:bg-teal-800"
+        className="flex h-14 w-14 items-center justify-center rounded-full bg-signal text-white shadow-lg transition-transform hover:scale-105 hover:bg-signal-dark"
       >
         {open ? <X size={22} /> : <MessageCircle size={22} />}
       </button>

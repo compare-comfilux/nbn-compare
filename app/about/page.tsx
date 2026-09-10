@@ -22,7 +22,7 @@ export default function AboutPage() {
           We compare plans using structured data and a transparent scoring
           methodology — not paid placement. AI helps explain results in plain
           English, but it never invents prices, speeds or features; see our{" "}
-          <a href="/methodology" className="text-teal-700 underline">
+          <a href="/methodology" className="text-signal underline">
             methodology
           </a>{" "}
           page for the full detail.

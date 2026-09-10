@@ -16,7 +16,7 @@ export default function ProgressBar({
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-slate-200">
         <div
-          className="h-full rounded-full bg-teal-700 transition-all duration-300"
+          className="h-full rounded-full bg-signal transition-all duration-300"
           style={{ width: `${pct}%` }}
         />
       </div>

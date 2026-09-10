@@ -23,7 +23,7 @@ const TIER_DESCRIPTIONS: Record<number, string> = {
 export default function SearchBySpeedPage() {
   return (
     <div className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <Link href="/compare" className="text-sm text-teal-700 hover:underline">
+      <Link href="/compare" className="text-sm text-signal hover:underline">
         ← Back to full comparison
       </Link>
 
@@ -41,7 +41,7 @@ export default function SearchBySpeedPage() {
           <Link
             key={tier}
             href={`/compare/by-speed/results?speed=${tier}`}
-            className="rounded-xl border border-slate-200 bg-white p-5 transition-colors hover:border-teal-400 hover:bg-teal-50/40"
+            className="rounded-xl border border-slate-200 bg-white p-5 transition-colors hover:border-signal/50 hover:bg-signal-tint/60"
           >
             <p className="text-2xl font-bold text-slate-900">
               {tier} <span className="text-sm font-medium text-slate-500">Mbps</span>

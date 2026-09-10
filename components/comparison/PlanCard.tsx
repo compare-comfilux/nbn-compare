@@ -21,7 +21,7 @@ export default function PlanCard({
   return (
     <Card className="flex flex-col gap-4">
       {badge && (
-        <span className="inline-flex w-fit items-center rounded-full bg-teal-700 px-3 py-1 text-xs font-semibold text-white">
+        <span className="inline-flex w-fit items-center rounded-full bg-signal px-3 py-1 text-xs font-semibold text-white">
           {badge}
         </span>
       )}

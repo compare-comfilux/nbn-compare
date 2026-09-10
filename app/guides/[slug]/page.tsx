@@ -36,7 +36,7 @@ export default async function GuideDetailPage({
 
   return (
     <article className="mx-auto max-w-2xl px-4 py-12 sm:px-6">
-      <Link href="/guides" className="text-sm text-teal-700 hover:underline">
+      <Link href="/guides" className="text-sm text-signal hover:underline">
         ← Back to guides
       </Link>
       <h1 className="mt-4 text-3xl font-bold text-slate-900">{guide.title}</h1>

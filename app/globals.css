@@ -2,17 +2,40 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #0f172a;
+  --foreground: #101827;
+
+  /* Signal: the one interactive/AI accent — buttons, links, nav, AI panels. */
+  --color-signal: #5b4ef0;
+  --color-signal-dark: #4636c9;
+  --color-signal-tint: #efedfe;
+
+  /* Data: reserved for objective, computed facts — scores, verification. */
+  --color-data: #0e8a72;
+  --color-data-dark: #0b6f5c;
+  --color-data-tint: #e1f4ef;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-signal: var(--color-signal);
+  --color-signal-dark: var(--color-signal-dark);
+  --color-signal-tint: var(--color-signal-tint);
+  --color-data: var(--color-data);
+  --color-data-dark: var(--color-data-dark);
+  --color-data-tint: var(--color-data-tint);
+  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
 }
 
 details summary::-webkit-details-marker {

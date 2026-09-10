@@ -28,7 +28,7 @@ export default function TermsPage() {
             Comparison results provided by this website are informational and
             are not financial or legal advice. They are generated using a
             transparent, published scoring methodology — see our{" "}
-            <a href="/methodology" className="text-teal-700 underline">
+            <a href="/methodology" className="text-signal underline">
               methodology
             </a>{" "}
             page.

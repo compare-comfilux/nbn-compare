@@ -59,8 +59,8 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
             onClick={() => handleSort(key)}
             className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               sortKey === key
-                ? "border-teal-700 bg-teal-700 text-white"
-                : "border-slate-200 bg-white text-slate-600 hover:border-teal-300"
+                ? "border-signal bg-signal text-white"
+                : "border-slate-200 bg-white text-slate-600 hover:border-signal/40"
             }`}
           >
             Sort by {SORT_LABELS[key]} {sortKey === key ? (ascending ? "↑" : "↓") : ""}
@@ -107,11 +107,11 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
                 <td className="px-4 py-3">{plan.contractType}</td>
                 <td className="px-4 py-3">{plan.dataAllowance}</td>
                 <td className="px-4 py-3">${plan.setupFee}</td>
-                <td className="px-4 py-3 font-semibold text-teal-800">{score}</td>
+                <td className="px-4 py-3 font-semibold text-data-dark">{score}</td>
                 <td className="px-4 py-3">
                   <Link
                     href={`/plans/${plan.slug}`}
-                    className="font-medium text-teal-700 hover:underline"
+                    className="font-medium text-signal hover:underline"
                   >
                     View
                   </Link>
@@ -139,7 +139,7 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
                 <p className="text-xs text-slate-500">{plan.provider}</p>
                 <p className="font-semibold text-slate-900">{plan.planName}</p>
               </div>
-              <span className="rounded-full bg-teal-50 px-2 py-1 text-xs font-semibold text-teal-800">
+              <span className="rounded-full bg-data-tint px-2 py-1 text-xs font-semibold text-data-dark">
                 {score} / 100
               </span>
             </div>
@@ -165,7 +165,7 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
             </dl>
             <Link
               href={`/plans/${plan.slug}`}
-              className="mt-3 inline-block text-sm font-medium text-teal-700 hover:underline"
+              className="mt-3 inline-block text-sm font-medium text-signal hover:underline"
             >
               View plan →
             </Link>

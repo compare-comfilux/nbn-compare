@@ -13,9 +13,16 @@ const SORT_LABELS: Record<SortKey, string> = {
   score: "Score",
 };
 
+// Show a manageable first page of results rather than dumping every
+// matching plan at once — too many options at once makes it harder,
+// not easier, to decide. "View more" reveals the rest on demand.
+const INITIAL_VISIBLE = 8;
+const REVEAL_STEP = 10;
+
 export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
   const [sortKey, setSortKey] = useState<SortKey>("score");
   const [ascending, setAscending] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE);
 
   const sorted = useMemo(() => {
     const copy = [...plans];
@@ -47,7 +54,13 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
       setSortKey(key);
       setAscending(false);
     }
+    // Re-sorting changes what "the first 8" means, so collapse back to
+    // the first page rather than showing a confusing partial reveal.
+    setVisibleCount(INITIAL_VISIBLE);
   }
+
+  const visible = sorted.slice(0, visibleCount);
+  const remaining = sorted.length - visible.length;
 
   return (
     <div>
@@ -67,6 +80,12 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
           </button>
         ))}
       </div>
+
+      {sorted.length > INITIAL_VISIBLE && (
+        <p className="mb-3 text-sm text-slate-500">
+          Showing {visible.length} of {sorted.length} plans, best {SORT_LABELS[sortKey].toLowerCase()} first.
+        </p>
+      )}
 
       {/* Desktop table */}
       <div className="hidden overflow-x-auto rounded-xl border border-slate-200 lg:block">
@@ -88,7 +107,7 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {sorted.map(({ plan, score }) => (
+            {visible.map(({ plan, score }) => (
               <tr key={plan.id} className="hover:bg-slate-50">
                 <td className="px-4 py-3 font-medium text-slate-900">
                   {plan.provider}
@@ -129,7 +148,7 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
 
       {/* Mobile cards */}
       <div className="space-y-3 lg:hidden">
-        {sorted.map(({ plan, score }) => (
+        {visible.map(({ plan, score }) => (
           <div
             key={plan.id}
             className="rounded-xl border border-slate-200 bg-white p-4"
@@ -172,6 +191,18 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
           </div>
         ))}
       </div>
+
+      {remaining > 0 && (
+        <div className="mt-5 text-center">
+          <button
+            onClick={() => setVisibleCount((v) => v + REVEAL_STEP)}
+            className="rounded-full border border-slate-200 bg-white px-5 py-2.5 text-sm font-semibold text-slate-700 hover:border-signal/40 hover:text-signal"
+          >
+            View {Math.min(remaining, REVEAL_STEP)} more plan
+            {Math.min(remaining, REVEAL_STEP) === 1 ? "" : "s"} ({remaining} remaining)
+          </button>
+        </div>
+      )}
     </div>
   );
 }

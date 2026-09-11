@@ -6,7 +6,7 @@ import Button from "@/components/ui/Button";
 import Alert from "@/components/ui/Alert";
 import DataAttribution from "@/components/ui/DataAttribution";
 import PlanDataUnavailable from "@/components/ui/PlanDataUnavailable";
-import PlanCard from "@/components/comparison/PlanCard";
+import ExpandablePlanGrid from "@/components/comparison/ExpandablePlanGrid";
 import ComparisonTable from "@/components/comparison/ComparisonTable";
 
 export const metadata: Metadata = buildMetadata({
@@ -97,14 +97,8 @@ export default async function SpeedResultsPage({
             published speeds are shown on each card.
           </p>
 
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {matches.map((scoredPlan, i) => (
-              <PlanCard
-                key={scoredPlan.plan.id}
-                scoredPlan={scoredPlan}
-                badge={i === 0 ? "Top Match" : undefined}
-              />
-            ))}
+          <div className="mt-8">
+            <ExpandablePlanGrid plans={matches} topBadge="Top Match" />
           </div>
 
           {matches.length > 1 && (

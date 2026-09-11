@@ -9,6 +9,7 @@ import LastVerified from "@/components/ui/LastVerified";
 import DataAttribution from "@/components/ui/DataAttribution";
 import Disclaimer from "@/components/ui/Disclaimer";
 import Card from "@/components/ui/Card";
+import ProviderLogo from "@/components/ui/ProviderLogo";
 import Button from "@/components/ui/Button";
 
 // No generateStaticParams: plan data is live and changes over time, so
@@ -52,8 +53,13 @@ export default async function PlanDetailPage({
         </span>
       )}
 
-      <p className="text-sm text-slate-500">{plan.provider}</p>
-      <h1 className="mt-1 text-3xl font-bold text-slate-900">{plan.planName}</h1>
+      <div className="flex items-center gap-3">
+        <ProviderLogo name={plan.provider} size={44} />
+        <div>
+          <p className="text-sm text-slate-500">{plan.provider}</p>
+          <h1 className="text-3xl font-bold text-slate-900">{plan.planName}</h1>
+        </div>
+      </div>
 
       <p className="mt-2 text-sm text-slate-600">{tags.join(" • ")}</p>
 

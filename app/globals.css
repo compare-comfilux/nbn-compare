@@ -24,18 +24,25 @@
   --color-data: var(--color-data);
   --color-data-dark: var(--color-data-dark);
   --color-data-tint: var(--color-data-tint);
-  --font-display: var(--font-space-grotesk);
-  --font-sans: var(--font-inter);
 }
 
+/*
+ * No external font is loaded (e.g. next/font/google): this keeps the
+ * build fully self-contained with zero build-time network dependency.
+ * Headings use a tighter letter-spacing on the system UI stack to read
+ * as a distinct, confident display style without a webfont fetch.
+ */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
 }
 
 h1, h2, h3, h4 {
-  font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    sans-serif;
+  letter-spacing: -0.02em;
 }
 
 details summary::-webkit-details-marker {

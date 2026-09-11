@@ -3,15 +3,70 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import type { ScoredPlan } from "@/types";
+import ProviderLogo from "@/components/ui/ProviderLogo";
 
-type SortKey = "price" | "download" | "upload" | "score";
+type SortKey =
+  | "provider"
+  | "plan"
+  | "monthly"
+  | "intro"
+  | "ongoing"
+  | "download"
+  | "upload"
+  | "contract"
+  | "data"
+  | "setupFee"
+  | "score";
 
-const SORT_LABELS: Record<SortKey, string> = {
-  price: "Price",
-  download: "Download speed",
-  upload: "Upload speed",
-  score: "Score",
-};
+const COLUMNS: { key: SortKey; label: string }[] = [
+  { key: "provider", label: "Provider" },
+  { key: "plan", label: "Plan" },
+  { key: "monthly", label: "Monthly" },
+  { key: "intro", label: "Intro" },
+  { key: "ongoing", label: "Ongoing" },
+  { key: "download", label: "Download" },
+  { key: "upload", label: "Upload" },
+  { key: "contract", label: "Contract" },
+  { key: "data", label: "Data" },
+  { key: "setupFee", label: "Setup fee" },
+  { key: "score", label: "Score" },
+];
+
+/** Parses "No lock-in" / "12 months" / "24 months" / arbitrary strings into a sortable month count. */
+function contractMonths(contractType: string): number {
+  if (contractType === "No lock-in") return 0;
+  const match = contractType.match(/\d+/);
+  return match ? Number(match[0]) : Number.POSITIVE_INFINITY;
+}
+
+function getSortValue(sp: ScoredPlan, key: SortKey): string | number {
+  const { plan, score } = sp;
+  switch (key) {
+    case "provider":
+      return plan.provider.toLowerCase();
+    case "plan":
+      return plan.planName.toLowerCase();
+    case "monthly":
+      return plan.monthlyPrice;
+    case "intro":
+      // Plans with no intro discount sort to the end regardless of direction.
+      return plan.introductoryPrice ?? Number.POSITIVE_INFINITY;
+    case "ongoing":
+      return plan.ongoingPrice;
+    case "download":
+      return plan.downloadSpeed;
+    case "upload":
+      return plan.uploadSpeed;
+    case "contract":
+      return contractMonths(plan.contractType);
+    case "data":
+      return plan.dataAllowance.toLowerCase();
+    case "setupFee":
+      return plan.setupFee;
+    case "score":
+      return score;
+  }
+}
 
 // Show a manageable first page of results rather than dumping every
 // matching plan at once — too many options at once makes it harder,
@@ -27,21 +82,12 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
   const sorted = useMemo(() => {
     const copy = [...plans];
     copy.sort((a, b) => {
-      let diff = 0;
-      switch (sortKey) {
-        case "price":
-          diff = a.plan.ongoingPrice - b.plan.ongoingPrice;
-          break;
-        case "download":
-          diff = a.plan.downloadSpeed - b.plan.downloadSpeed;
-          break;
-        case "upload":
-          diff = a.plan.uploadSpeed - b.plan.uploadSpeed;
-          break;
-        case "score":
-          diff = a.score - b.score;
-          break;
-      }
+      const av = getSortValue(a, sortKey);
+      const bv = getSortValue(b, sortKey);
+      const diff =
+        typeof av === "string" && typeof bv === "string"
+          ? av.localeCompare(bv)
+          : (av as number) - (bv as number);
       return ascending ? diff : -diff;
     });
     return copy;
@@ -52,7 +98,9 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
       setAscending((v) => !v);
     } else {
       setSortKey(key);
-      setAscending(false);
+      // Price/fee-style columns make more sense low-to-high by default;
+      // speed/score-style columns make more sense high-to-low by default.
+      setAscending(["monthly", "intro", "ongoing", "setupFee", "contract"].includes(key));
     }
     // Re-sorting changes what "the first 8" means, so collapse back to
     // the first page rather than showing a confusing partial reveal.
@@ -61,56 +109,53 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
 
   const visible = sorted.slice(0, visibleCount);
   const remaining = sorted.length - visible.length;
+  const activeLabel = COLUMNS.find((c) => c.key === sortKey)?.label ?? "";
 
   return (
     <div>
-      {/* Sort controls (also used as the mobile view) */}
-      <div className="mb-4 flex flex-wrap gap-2">
-        {(Object.keys(SORT_LABELS) as SortKey[]).map((key) => (
-          <button
-            key={key}
-            onClick={() => handleSort(key)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
-              sortKey === key
-                ? "border-signal bg-signal text-white"
-                : "border-slate-200 bg-white text-slate-600 hover:border-signal/40"
-            }`}
-          >
-            Sort by {SORT_LABELS[key]} {sortKey === key ? (ascending ? "↑" : "↓") : ""}
-          </button>
-        ))}
-      </div>
-
       {sorted.length > INITIAL_VISIBLE && (
         <p className="mb-3 text-sm text-slate-500">
-          Showing {visible.length} of {sorted.length} plans, best {SORT_LABELS[sortKey].toLowerCase()} first.
+          Showing {visible.length} of {sorted.length} plans, sorted by{" "}
+          {activeLabel.toLowerCase()} ({ascending ? "lowest" : "highest"} first).
         </p>
       )}
 
       {/* Desktop table */}
       <div className="hidden overflow-x-auto rounded-xl border border-slate-200 lg:block">
-        <table className="w-full min-w-[900px] text-left text-sm">
+        <table className="w-full min-w-[960px] text-left text-sm">
           <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
             <tr>
-              <th className="px-4 py-3">Provider</th>
-              <th className="px-4 py-3">Plan</th>
-              <th className="px-4 py-3">Monthly</th>
-              <th className="px-4 py-3">Intro</th>
-              <th className="px-4 py-3">Ongoing</th>
-              <th className="px-4 py-3">Download</th>
-              <th className="px-4 py-3">Upload</th>
-              <th className="px-4 py-3">Contract</th>
-              <th className="px-4 py-3">Data</th>
-              <th className="px-4 py-3">Setup fee</th>
-              <th className="px-4 py-3">Score</th>
+              {COLUMNS.map((col) => (
+                <th key={col.key} className="px-4 py-3">
+                  <button
+                    onClick={() => handleSort(col.key)}
+                    className={`flex items-center gap-1 font-semibold uppercase tracking-wide transition-colors hover:text-signal ${
+                      sortKey === col.key ? "text-signal" : ""
+                    }`}
+                  >
+                    {col.label}
+                    <span className="text-[10px]">
+                      {sortKey === col.key ? (ascending ? "▲" : "▼") : ""}
+                    </span>
+                  </button>
+                </th>
+              ))}
               <th className="px-4 py-3" />
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
-            {visible.map(({ plan, score }) => (
-              <tr key={plan.id} className="hover:bg-slate-50">
+            {visible.map(({ plan, score }, i) => (
+              <tr
+                key={plan.id}
+                className={`transition-colors hover:bg-signal-tint/40 ${
+                  i % 2 === 1 ? "bg-slate-50/70" : "bg-white"
+                }`}
+              >
                 <td className="px-4 py-3 font-medium text-slate-900">
-                  {plan.provider}
+                  <div className="flex items-center gap-2">
+                    <ProviderLogo name={plan.provider} size={24} />
+                    {plan.provider}
+                  </div>
                 </td>
                 <td className="px-4 py-3">{plan.planName}</td>
                 <td className="px-4 py-3">${plan.monthlyPrice}</td>
@@ -143,20 +188,43 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
 
       <p className="mt-2 hidden text-xs text-slate-400 lg:block">
         ~ indicates an estimated upload speed where the provider doesn&apos;t
-        publish one.
+        publish one. Click any column heading to sort by it.
       </p>
 
-      {/* Mobile cards */}
+      {/* Mobile: sort chips + cards, since there's no table header to click */}
+      <div className="mb-4 flex flex-wrap gap-2 lg:hidden">
+        {COLUMNS.filter((c) =>
+          ["ongoing", "download", "upload", "contract", "score"].includes(c.key)
+        ).map((col) => (
+          <button
+            key={col.key}
+            onClick={() => handleSort(col.key)}
+            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+              sortKey === col.key
+                ? "border-signal bg-signal text-white"
+                : "border-slate-200 bg-white text-slate-600 hover:border-signal/40"
+            }`}
+          >
+            {col.label} {sortKey === col.key ? (ascending ? "↑" : "↓") : ""}
+          </button>
+        ))}
+      </div>
+
       <div className="space-y-3 lg:hidden">
-        {visible.map(({ plan, score }) => (
+        {visible.map(({ plan, score }, i) => (
           <div
             key={plan.id}
-            className="rounded-xl border border-slate-200 bg-white p-4"
+            className={`rounded-xl border border-slate-200 p-4 ${
+              i % 2 === 1 ? "bg-slate-50/70" : "bg-white"
+            }`}
           >
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">{plan.provider}</p>
-                <p className="font-semibold text-slate-900">{plan.planName}</p>
+              <div className="flex items-center gap-2">
+                <ProviderLogo name={plan.provider} size={28} />
+                <div>
+                  <p className="text-xs text-slate-500">{plan.provider}</p>
+                  <p className="font-semibold text-slate-900">{plan.planName}</p>
+                </div>
               </div>
               <span className="rounded-full bg-data-tint px-2 py-1 text-xs font-semibold text-data-dark">
                 {score} / 100

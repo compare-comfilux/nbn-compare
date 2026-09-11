@@ -5,6 +5,7 @@ import PriceDisplay from "@/components/ui/PriceDisplay";
 import SpeedDisplay from "@/components/ui/SpeedDisplay";
 import LastVerified from "@/components/ui/LastVerified";
 import SourceBadge from "@/components/ui/SourceBadge";
+import ProviderLogo from "@/components/ui/ProviderLogo";
 import Button from "@/components/ui/Button";
 import { describePlan } from "@/lib/comparison/describePlan";
 
@@ -33,9 +34,12 @@ export default function PlanCard({
       )}
 
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm text-slate-500">{plan.provider}</p>
-          <h3 className="text-lg font-bold text-slate-900">{plan.planName}</h3>
+        <div className="flex items-start gap-3">
+          <ProviderLogo name={plan.provider} size={36} />
+          <div>
+            <p className="text-sm text-slate-500">{plan.provider}</p>
+            <h3 className="text-lg font-bold text-slate-900">{plan.planName}</h3>
+          </div>
         </div>
         <ScoreBadge score={score} />
       </div>

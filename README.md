@@ -35,11 +35,24 @@ link wherever this data is shown; that's already implemented in
 pages that display plan data) — **do not remove it**.
 
 That feed does not include per-plan upload speed, modem details, or
-curated "pros/cons/suitable for" copy. See `lib/external/ozbroadbandReview.ts`
-for exactly how we derive upload speed (parsed from the plan name where
-published, otherwise a flagged estimate) and `lib/comparison/describePlan.ts`
-for the objective, rule-based tags shown instead of fabricated editorial
-content. Full detail on all of this is on the `/methodology` page.
+curated "pros/cons/suitable for" copy — and no logo images. See
+`lib/external/ozbroadbandReview.ts` for exactly how we derive upload
+speed (parsed from the plan name where published, otherwise a flagged
+estimate) and `lib/comparison/describePlan.ts` for the objective,
+rule-based tags shown instead of fabricated editorial content. Full
+detail on all of this is on the `/methodology` page.
+
+**Provider logos**: `lib/providers/providerDomains.ts` holds a curated,
+individually-verified list of provider name -> official domain
+mappings (getting this wrong shows the wrong company's logo, so
+entries are only added once confirmed, not guessed). `components/ui/ProviderLogo.tsx`
+then shows a real logo fetched live from that domain — via
+[logo.dev](https://www.logo.dev/) if `NEXT_PUBLIC_LOGO_DEV_KEY` is set
+(free tier, better quality), otherwise via Google's public favicon
+service (no key needed, lower quality). Providers without a verified
+domain, or any image that fails to load, fall back to a deterministic
+initials avatar rather than a broken image. To add a provider, verify
+their real domain yourself and add it to the mapping.
 
 Requests are cached via Next.js's fetch cache (`revalidate: 3600`, shared
 across serverless invocations on Vercel) to stay well within the source's

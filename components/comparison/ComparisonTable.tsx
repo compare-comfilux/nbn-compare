@@ -123,14 +123,14 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
       {/* Desktop table */}
       <div className="hidden overflow-x-auto rounded-xl border border-slate-200 lg:block">
         <table className="w-full min-w-[960px] text-left text-sm">
-          <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <thead className="bg-slate-900 text-xs font-bold uppercase tracking-wide text-white">
             <tr>
               {COLUMNS.map((col) => (
-                <th key={col.key} className="px-4 py-3">
+                <th key={col.key} className="px-4 py-3.5">
                   <button
                     onClick={() => handleSort(col.key)}
-                    className={`flex items-center gap-1 font-semibold uppercase tracking-wide transition-colors hover:text-signal ${
-                      sortKey === col.key ? "text-signal" : ""
+                    className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 font-bold uppercase tracking-wide transition-colors hover:text-white ${
+                      sortKey === col.key ? "bg-white/15 text-white" : "text-slate-300"
                     }`}
                   >
                     {col.label}
@@ -140,7 +140,7 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
                   </button>
                 </th>
               ))}
-              <th className="px-4 py-3" />
+              <th className="px-4 py-3.5" />
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">

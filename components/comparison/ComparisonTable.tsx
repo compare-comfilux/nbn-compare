@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import type { ScoredPlan } from "@/types";
 import ProviderLogo from "@/components/ui/ProviderLogo";
 
@@ -129,14 +130,20 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
                 <th key={col.key} className="px-4 py-3.5">
                   <button
                     onClick={() => handleSort(col.key)}
-                    className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 font-bold uppercase tracking-wide transition-colors hover:text-white ${
+                    className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 font-bold uppercase tracking-wide transition-colors hover:bg-white/10 hover:text-white ${
                       sortKey === col.key ? "bg-white/15 text-white" : "text-slate-300"
                     }`}
                   >
                     {col.label}
-                    <span className="text-[10px]">
-                      {sortKey === col.key ? (ascending ? "▲" : "▼") : ""}
-                    </span>
+                    {sortKey === col.key ? (
+                      ascending ? (
+                        <ArrowUp size={13} strokeWidth={3} />
+                      ) : (
+                        <ArrowDown size={13} strokeWidth={3} />
+                      )
+                    ) : (
+                      <ChevronsUpDown size={13} className="opacity-60" />
+                    )}
                   </button>
                 </th>
               ))}
@@ -188,10 +195,13 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
 
       <p className="mt-2 hidden text-xs text-slate-400 lg:block">
         ~ indicates an estimated upload speed where the provider doesn&apos;t
-        publish one. Click any column heading to sort by it.
+        publish one.
       </p>
 
       {/* Mobile: sort chips + cards, since there's no table header to click */}
+      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-slate-400 lg:hidden">
+        Sort by
+      </p>
       <div className="mb-4 flex flex-wrap gap-2 lg:hidden">
         {COLUMNS.filter((c) =>
           ["ongoing", "download", "upload", "contract", "score"].includes(c.key)
@@ -199,13 +209,22 @@ export default function ComparisonTable({ plans }: { plans: ScoredPlan[] }) {
           <button
             key={col.key}
             onClick={() => handleSort(col.key)}
-            className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+            className={`flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
               sortKey === col.key
                 ? "border-signal bg-signal text-white"
                 : "border-slate-200 bg-white text-slate-600 hover:border-signal/40"
             }`}
           >
-            {col.label} {sortKey === col.key ? (ascending ? "↑" : "↓") : ""}
+            {col.label}
+            {sortKey === col.key ? (
+              ascending ? (
+                <ArrowUp size={12} strokeWidth={3} />
+              ) : (
+                <ArrowDown size={12} strokeWidth={3} />
+              )
+            ) : (
+              <ChevronsUpDown size={12} className="opacity-60" />
+            )}
           </button>
         ))}
       </div>
